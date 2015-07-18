@@ -18,7 +18,7 @@ main = main_with >>= \ conf -> do
   mapM print
       $ ( case limit conf of
             Nothing -> id ; Just l -> take l )
-      $ fsts (states conf) (width conf)
+      $ fsts (states conf) (minwidth conf, maxwidth conf)
       (take (check conf) $ eval $ from conf)
       (eval $ to conf)
 
@@ -28,14 +28,14 @@ main = main_with >>= \ conf -> do
 -- from morse [0,1,2,0,2,1,0,1,2,1,0,2,0,1,2,0,2,1,0,2] ...
 -- to   thue  [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,1] ...
 -- (note: argument 1 : one state = morphism )
-test1 = fsts 1 3 (take 1000 morse) thue
+test1 = fsts 1 (1,3) (take 1000 morse) thue
 
 -- | all fts with q states and max image length l
 -- that map stream s to stream t.
 -- search stops successfully if s is consumed.
 -- (call this function with some finite prefix s)
-fsts :: Int -> Int -> [Int] -> [Int] -> [ FST Q Int ]
-fsts q l s t =  
+fsts :: Int -> (Int,Int) -> [Int] -> [Int] -> [ FST Q Int ]
+fsts q (lmin, lmax) s t =  
   let work :: M.Map (Q,Int) ([Int],Q)
            -> Q -> [Int] -> [Int]
            -> [ FST Q Int ]
@@ -54,7 +54,7 @@ fsts q l s t =
           work m z' xs post
         Nothing -> do
           z' <- take q [ 0 .. ]
-          k <- [ 0 .. l ]
+          k <- [ lmin .. lmax ]
           let (pre,post) = splitAt k ys
           let m' = M.insert (z,x) (pre,z') m
           work m' z' xs post

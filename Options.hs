@@ -15,7 +15,7 @@ opts = info (helper <*> config)
    ( fullDesc
      <> header "find FST that transforms one HD0L stream to another"
      <> progDesc (unlines 
-       [ "example: find-fst -s 4 -w 1 -c 10000 -f Thue -t 'Snd Thue'"
+       [ "example: find-fst -s 4 -w 1 -l 2 -c 10000 -f Thue -t 'Snd Thue'"
        , "stream syntax: data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream | Delta Stream | Inv Stream"
        ] )
    )
@@ -25,7 +25,8 @@ data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream 
 
 data Config =
   Config { states :: Int -- ^ of FST
-         , width :: Int -- ^ of output words of FST transitions
+         , maxwidth :: Int
+         , minwidth :: Int
          , check :: Int -- ^ for input word of that length
          , limit :: Maybe Int -- ^ limit number of outputs
          , from :: Stream
@@ -40,9 +41,16 @@ config = Config
       <> help "number of states of the FST"
     )
   <*> option auto
-    ( long "width" <> short 'w'
+    ( long "maxwidth" <> short 'w'
       <> metavar "INT"
       <> help "max. length of output word of a FTS transition"
+    )
+  <*> option auto
+    ( long "minwidth" <> short 'i'
+      <> showDefault
+      <> metavar "INT"
+      <> help "min. length of output word of a FTS transition"
+      <> value 0
     )
   <*> option auto
     ( long "check" <> short 'c' <> metavar "INT"
