@@ -20,11 +20,15 @@ opts = info (helper <*> config)
        ] )
    )
 
-data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream | Delta Stream | Inv Stream
+data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF
+            | Snd Stream | Thrd Stream | Delta Stream | Inv Stream | Tail Stream
+                                                                     | Split [ Stream ] Stream
+            | Argument | Null
   deriving (Eq, Ord, Read, Show)
 
 data Config =
-  Config { states :: Int -- ^ of FST
+  Config { algebraic :: Bool
+         , states :: Int -- ^ of FST
          , maxwidth :: Int
          , minwidth :: Int
          , check :: Int -- ^ for input word of that length
@@ -35,13 +39,14 @@ data Config =
 
 config :: Parser Config
 config = Config
-  <$> option auto
-    ( long "states" <> short 's'
+  <$> switch ( long "algebraic" <> short 'g' )
+  <*> option auto
+    ( long "states" <> short 's' <> value 1
       <> metavar "INT"
-      <> help "number of states of the FST"
+      <> help "number of states of the FST, or size of algebraic expression"
     )
   <*> option auto
-    ( long "maxwidth" <> short 'w'
+    ( long "maxwidth" <> short 'w' <> value 2
       <> metavar "INT"
       <> help "max. length of output word of a FTS transition"
     )

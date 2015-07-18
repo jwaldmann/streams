@@ -14,17 +14,47 @@ main = main_with >>= \ conf -> do
   putStrLn $ unlines
     [ "input  : " ++ show (take 20 $ eval $ from conf)
     , "output : " ++ show (take 20 $ eval $ to   conf)
-    ]  
-  mapM print
-      $ ( case limit conf of
-            Nothing -> id ; Just l -> take l )
-      $ fsts (states conf) (minwidth conf, maxwidth conf)
-      (take (check conf) $ eval $ from conf)
-      (eval $ to conf)
+    ]
+  let restrict = case limit conf of
+            Nothing -> id ; Just l -> take l 
+  case algebraic conf of
+    False -> mapM_ print $ restrict $ 
+               fsts (states conf)
+               (minwidth conf, maxwidth conf)
+               (take (check conf) $ eval $ from conf)
+               (eval $ to conf)
+    True -> mapM_ print $ restrict $ do
+               let input = eval $ from conf
+                   output = eval $ to conf
+               s <- [0 .. states conf ]
+               x <- expressions s
+               guard $ take (check conf) (evala input x) 
+                    == take (check conf) output
+               return x
+
+-- * algebraic method
+
+expressions :: Int -> [Stream]
+expressions 0 = [ Argument,Null ]
+expressions s = unary s ++ binary s
+
+unary s = do
+  x <- expressions $ s - 1
+  op <- [ Snd, Thrd, Delta , Inv , Tail ]
+  return $ op x
+
+binary s = do
+  sl <- [ 0 .. s ] ; sr <- [ 0 .. s  ]
+  let rest = s - sl - sr - 1
+  guard $ rest >= 0
+  x <- expressions sl ; y <- expressions sr
+  z <- expressions rest
+  return $ Split [x,y] z
+
 
 -- * search
 
--- | this finds the morphism 0 -> 011, 1 -> 91, 2 -> 0
+-- | this finds the morphism 0 -> 011, 1 -> 01, 2 -> 0
 -- from morse [0,1,2,0,2,1,0,1,2,1,0,2,0,1,2,0,2,1,0,2] ...
 -- to   thue  [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,1] ...
 -- (note: argument 1 : one state = morphism )
@@ -86,23 +116,37 @@ sierp = zippp alt alt $ inv sierp
 
 kolak = 1 : 2 : 2 : unfold (drop 2 kolak)
 
-eval = \ case
+eval :: Stream -> [Int]
+eval = evala $ error "cannot use Argument"
+
+evala :: [Int] -> Stream -> [Int]
+evala arg = \ case
+  Argument -> arg ; Null -> []
   Fib -> fib ;  Thue -> thue;  Morse -> morse;  PD -> pd
   Waltz -> waltz ; Sierp -> sierp ; Kolak -> kolak ; PF -> pf
-  Snd x -> second $ eval x ; Thrd x -> third $ eval x
-  Delta x -> delta $ eval x ; Inv x -> inv $ eval x
+  Snd x -> second $ evala arg x ; Thrd x -> third $ evala arg x
+  Delta x -> delta $ evala arg x ; Inv x -> inv $ evala arg x
+  Tail x -> drop 1 $ evala arg x
+  Split xs y ->
+    let s = evala arg y in zips $ map (evala s) xs
+
+zips :: [[Int]] -> [Int]
+zips xss = concat (map (take 1) xss)
+         ++ zips (map (drop 1) xss)
 
 -- * finite transducers
 
 -- | substream: every second letter
 second (x:y:rest) = x: second rest
+second [] = []
 
 -- | substream: every third letter
 third (x:y:z:rest) = x: third rest
+third [] = []
 
 -- | difference operator for 0-1-streams
 delta (x:y:zs) = abs (signum (x-y)) : delta (y:zs)
-                     
+delta _ = []                     
 
 data FST q a = FST q (M.Map (q,a) ([a],q))
   deriving Show
