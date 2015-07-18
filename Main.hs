@@ -80,17 +80,17 @@ zippp (x:xs) ys zs = x : zippp ys zs xs
 pf = zipp alt pf
 
 unfold s = concat $ zipWith replicate s $ concat $ repeat [1,2]
+inv s = map (1-) s
 
-sierp = zippp alt alt $ map (1-) sierp
+sierp = zippp alt alt $ inv sierp
 
 kolak = 1 : 2 : 2 : unfold (drop 2 kolak)
-
-
 
 eval = \ case
   Fib -> fib ;  Thue -> thue;  Morse -> morse;  PD -> pd
   Waltz -> waltz ; Sierp -> sierp ; Kolak -> kolak ; PF -> pf
   Snd x -> second $ eval x ; Thrd x -> third $ eval x
+  Delta x -> delta $ eval x ; Inv x -> inv $ eval x
 
 -- * finite transducers
 
@@ -99,7 +99,10 @@ second (x:y:rest) = x: second rest
 
 -- | substream: every third letter
 third (x:y:z:rest) = x: third rest
-  
+
+-- | difference operator for 0-1-streams
+delta (x:y:zs) = abs (signum (x-y)) : delta (y:zs)
+                     
 
 data FST q a = FST q (M.Map (q,a) ([a],q))
   deriving Show

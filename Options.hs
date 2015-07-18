@@ -16,11 +16,11 @@ opts = info (helper <*> config)
      <> header "find FST that transforms one HD0L stream to another"
      <> progDesc (unlines 
        [ "example: find-fst -s 4 -w 1 -c 10000 -f Thue -t 'Snd Thue'"
-       , "stream syntax: data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream"
+       , "stream syntax: data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream | Delta Stream | Inv Stream"
        ] )
    )
 
-data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream
+data Stream = Fib | Thue | Morse | Waltz | PD | Sierp | Kolak | PF | Snd Stream | Thrd Stream | Delta Stream | Inv Stream
   deriving (Eq, Ord, Read, Show)
 
 data Config =
