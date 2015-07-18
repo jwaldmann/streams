@@ -5,7 +5,7 @@ concepts explained in "Degrees of Streams" by Endrullis et al.,
 see <http://joerg.endrullis.de/research.html#degrees>
 
 The implementation is naive, it does a  tree search
-for transduces with the given parameters (number of states,
+for transducers with the given parameters (number of states,
 max. length of output words of transitions).
 
 A more clever implementation should use Makanin's algorithm
