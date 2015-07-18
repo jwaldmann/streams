@@ -51,8 +51,8 @@ output : [0,1,2,0,2,1,0,1,2,1,0,2,0,1,2,0,2,1,0,2]
 FST A (fromList [((A,0),([],A)),((A,1),([],B)),((B,0),([],C)),((B,1),([0],B)),((C,0),([2],A)),((C,1),([1],B))])
 
 ```
-One should always check this with larger values for `-c`,
-and finally, on paper.
+One should always check this with larger values for `-c`
+(see remark below) and finally, on paper.
 
 So, Thue and Morse are FST-equivalent.
 
@@ -117,4 +117,30 @@ but doesn't. Why?
 ```
 find-fst -s 4 -w 1 -c 1000 -f Waltz -t Sierp -l 1
 ```
+
+Remark
+------
+Sometimes the program prints a FST
+but it does not solve the problem. Here is how to notice
+```
+find-fst -s 6 -w 6 -c 1000 -f Waltz -t Sierp -l 1
+input  : [0,0,1,0,0,1,1,1,0,0,0,1,0,0,1,1,1,0,1,1]
+output : [0,0,1,1,1,1,0,0,0,1,1,0,0,0,0,1,1,0,0,0]
+
+FST A (fromList
+[((A,0),([],A)),((A,1),([],B))
+,((B,0),([],A)),((B,1),([],C))
+,((C,0),([0,0],D)),((C,1),([],A))
+,((D,0),([0,0,1,1,0],C)),((D,1),([1,1,1,1,0,0],E))
+,((E,0),([1,1,1,0,0,0],F)),((E,1),([0,1,1],C))
+,((F,0),([],F)),((F,1),([],F))])
+```
+The problem is that this FST will
+ultimately reach state F, which is a dead end: we can
+never leave it, and never output anything.
+
+This test should really be implemented
+in the source code. Currently, there is a work-around
+(check that `length output >= srqt (length input)`
+but this is clearly wrong in both directions).
 
