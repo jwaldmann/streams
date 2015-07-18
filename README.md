@@ -1,6 +1,16 @@
-Note: this software is for experimentation with
+Introduction
+-----------
+This software is for experimentation with
 concepts explained in "Degrees of Streams" by Endrullis et al.,
 see <http://joerg.endrullis.de/research.html#degrees>
+
+The implementation is naive, it does a  tree search
+for transduces with the given parameters (number of states,
+max. length of output words of transitions).
+
+A more clever implementation should use Makanin's algorithm
+to decide FST-reducibility (by a given number of states)
+between HD0L streams. (I think.)
 
 Some D0L Words 
 --------------
