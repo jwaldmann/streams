@@ -88,6 +88,21 @@ FST A (fromList [((A,0),([0],B)),((A,1),([1,0],A)),((B,0),([1,0],B)),((B,1),([0,
 This means that `Fib` and `Snd Fib` are FST-equivalent.
 It is open whether `Thrd Fib`  is in the same class.
 
+Another observation here is that we can go from `Snd Fib` to `Fib` using output words of length at most one, if we allow
+one extra state
+```
+find-fst -s 4 -w 1 -l 1  -c 100000 -f 'Snd Fib' -t Fib
+input  : [0,0,1,1,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1]
+output : [0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,1]
+
+FST A (fromList [((A,0),([],A)),((A,1),([],B)),((B,0),([1],C)),((B,1),([0],B)),((C,0),([],D)),((C,1),([1],D)),((D,0),([0],C)),((D,1),([0],B))])
+```
+There should not be anything special about the number 2 here
+(in relation to the Fibonacci sequence).
+This motives to search for a FST from `Thrd Fib` to `Fib`
+with output length at most one.
+
+
 The paper also states that Waltz and Sierpinski are FST-equivalent. Let us check this. From Sierpinski to Waltz:
 ```
 find-fst -s 4 -w 2 -c 10000 -f Sierp -t Waltz -l 1
