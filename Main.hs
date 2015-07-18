@@ -83,7 +83,7 @@ eval = \ case
 -- * finite transducers
 
 -- | substream: every second letter
-second (x:y:rest) = x: third rest
+second (x:y:rest) = x: second rest
 
 -- | substream: every third letter
 third (x:y:z:rest) = x: third rest

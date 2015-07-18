@@ -14,8 +14,10 @@ main_with = execParser opts
 opts = info (helper <*> config)
    ( fullDesc
      <> header "find FST that transforms one HD0L stream to another"
-     <> progDesc "example: find-fst -s 4 -w 1 -c 10000 -f Thue -t 'Snd Thue'"
-     <> progDesc "stream syntax: data Stream = Fib | Thue | Morse | Waltz | Pdbl | Snd Stream | Thrd Stream"
+     <> progDesc (unlines 
+       [ "example: find-fst -s 4 -w 1 -c 10000 -f Thue -t 'Snd Thue'"
+       , "stream syntax: data Stream = Fib | Thue | Morse | Waltz | Pdbl | Snd Stream | Thrd Stream"
+       ] )
    )
 
 data Stream = Fib | Thue | Morse | Waltz | Pdbl
