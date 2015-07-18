@@ -1,8 +1,10 @@
 Note: this software is for experimentation with
 concepts explained in "Degrees of Streams" by Endrullis et al.,
-see http://joerg.endrullis.de/research.html#degrees
+see <http://joerg.endrullis.de/research.html#degrees>
 
-== Some D0L Words ==
+Some D0L Words 
+--------------
+
 
 ```
 streamfix x f = let s = x : tail ( s >>= f) in s
@@ -16,7 +18,8 @@ waltz = streamfix 0 $ \ case 0 -> [0,0,1]; 1 -> [1,1,0]
 Names in the literature sometimes differ,
 e.g., our `morse` is often called Thue-Morse, etc.
 
-== Some FST Reductions ==
+Some FST Reductions 
+-------------------
 
 It is well-known that we can go from Morse to Thue via a morphism (that is, number of states is 1)
 ```
