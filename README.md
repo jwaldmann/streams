@@ -9,7 +9,8 @@ for transducers with the given parameters (number of states,
 max. length of output words of transitions).
 
 A more clever implementation should use Makanin's algorithm
-to decide FST-reducibility (by a given number of states)
+to decide FST-reducibility (by a given number of states,
+but without a bound on the output lengths)
 between HD0L streams. (I think.)
 
 Some D0L Words 
