@@ -15,7 +15,10 @@ main = main_with >>= \ conf -> do
     [ "input  : " ++ show (take 20 $ eval $ from conf)
     , "output : " ++ show (take 20 $ eval $ to   conf)
     ]  
-  mapM print $ fsts (states conf) (width conf)
+  mapM print
+      $ ( case limit conf of
+            Nothing -> id ; Just l -> take l )
+      $ fsts (states conf) (width conf)
       (take (check conf) $ eval $ from conf)
       (eval $ to conf)
 
@@ -67,18 +70,27 @@ streamfix x f = let s = x : tail ( s >>= f) in s
 fib   = streamfix 0 $ \ case 0 -> [0,1]  ; 1 -> [0] 
 thue  = streamfix 0 $ \ case 0 -> [0,1]  ; 1 -> [1,0]
 morse = streamfix 0 $ \ case 0 -> [0,1,2]; 1 -> [0,2]; 2 -> [1]
-pdbl  = streamfix 0 $ \ case 0 -> [0,1] ; 1 -> [0,0]
-pdbl3 = third pdbl
+pd  = streamfix 0 $ \ case 0 -> [0,1] ; 1 -> [0,0]
 waltz = streamfix 0 $ \ case 0 -> [0,0,1]; 1 -> [1,1,0]
 
+alt = concat $ repeat [0,1]
+zipp (x:xs) ys = x : zipp ys xs
+zippp (x:xs) ys zs = x : zippp ys zs xs
+
+pf = zipp alt pf
+
+unfold s = concat $ zipWith replicate s $ concat $ repeat [1,2]
+
+sierp = zippp alt alt $ map (1-) sierp
+
+kolak = 1 : 2 : 2 : unfold (drop 2 kolak)
+
+
+
 eval = \ case
-  Fib -> fib
-  Thue -> thue
-  Morse -> morse
-  Pdbl -> pdbl
-  Waltz -> waltz
-  Snd x -> second $ eval x
-  Thrd x -> third $ eval x
+  Fib -> fib ;  Thue -> thue;  Morse -> morse;  PD -> pd
+  Waltz -> waltz ; Sierp -> sierp ; Kolak -> kolak ; PF -> pf
+  Snd x -> second $ eval x ; Thrd x -> third $ eval x
 
 -- * finite transducers
 
