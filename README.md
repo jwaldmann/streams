@@ -43,7 +43,7 @@ FST A (fromList [((A,0),([],A)),((A,1),([],B)),((B,0),([],C)),((B,1),([0],B)),((
 One should always check this with larger values for `-c`,
 and finally, on paper.
 
-So, Thue and Morse are FTS-equivalent.
+So, Thue and Morse are FST-equivalent.
 
 We have these stream operators (which are actually FSTs)
 ```
@@ -100,7 +100,7 @@ indeed these two streams are related by a difference
 in every other position. An FST is able to compute delta,
 and then we just compose it with "change every other letter".
 How many states would the composed FST have?
-Perhaps the produce of the number of states of the factors,
+Perhaps the product of the number of states of the factors,
 that is, 2 by 2 = 4? Then the following should work,
 but doesn't. Why?
 ```
